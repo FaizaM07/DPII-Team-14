@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>DDoS Detection System</h1>
+    <p>Network metrics are being automatically captured in real-time.</p>
+
+    <div id="status-box" class="status safe">Checking...</div>
+    <p id="confidence"></p>
+    <p id="timestamp"></p>
+
+    <h2>Current Network Metrics</h2>
+    <div id="features-container">
+        <p>Loading current metrics...</p>
+    </div>
+</div>
+
+<script>
+    async function fetchPrediction() {
+        try {
+            // Change the fetch URL in your index.html
+            const response = await fetch("/api/predict", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            const statusBox = document.getElementById("status-box");
+            const confidence = document.getElementById("confidence");
+            const timestamp = document.getElementById("timestamp");
+            const featuresContainer = document.getElementById("features-container");
+
+            if (data.attack_detected) {
+                statusBox.textContent = "⚠️ ATTACK DETECTED!";
+                statusBox.className = "status attack";
+            } else {
+                statusBox.textContent = "✅ No Attack Found";
+                statusBox.className = "status safe";
+            }
+
+            confidence.textContent = "Confidence: " + data.confidence;
+            timestamp.textContent = "Last Checked: " + data.time;
+
+            // Update features display
+            if (data.features) {
+                let featuresHTML = '<ul class="features-list">';
+                for (const [key, value] of Object.entries(data.features)) {
+                    featuresHTML += `<li><strong>${key}:</strong> ${value}</li>`;
+                }
+                featuresHTML += '</ul>';
+                featuresContainer.innerHTML = featuresHTML;
+            }
+
+        } catch (err) {
+            console.error("Error fetching prediction:", err);
+            document.getElementById("status-box").textContent = "Error fetching data";
+        }
+    }
+
+    // Fetch prediction every 5 seconds
+    setInterval(fetchPrediction, 5000);
+    fetchPrediction(); // initial load
+</script>
+{% endblock %}

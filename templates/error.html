@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<div class="container error-container">
+  <h2>Error Occurred</h2>
+
+  <div class="error-card">
+    <h3>Something went wrong</h3>
+    <div class="error-message">
+      <p>{{ error_message }}</p>
+    </div>
+
+    <div class="error-actions">
+      <a href="{{ url_for('home') }}" class="btn">Return Home</a>
+      <button onclick="history.back()" class="btn">Go Back</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

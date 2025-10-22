@@ -1,0 +1,28 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container">
+  <h2>Detection Results</h2>
+
+  <div
+    class="result-card {% if detection.attack_detected %}attack{% else %}safe{% endif %}"
+  >
+    <h3>
+      Status: {% if detection.attack_detected %}ATTACK DETECTED{% else %}No Attack
+      Found{% endif %}
+    </h3>
+    <p>Confidence: {{ detection.confidence }}</p>
+    <p>Detection Time: {{ detection.time }}</p>
+
+    <div class="details">
+      <h4>Network Statistics:</h4>
+      <ul>
+        {% for key, value in detection.features.items() %}
+        <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <a href="{{ url_for('home') }}" class="btn">Return Home</a>
+</div>
+{% endblock %}
